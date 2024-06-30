@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./node_modules/three/build/three.module.js",
+                "OrbitControls": "./node_modules/three/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <script type="vertex" id="vs">
+        uniform float depth;
+        varying vec2 vUv;
+        void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    </script>
+    <script type="fragment" id="fs">
+        uniform vec3 color;
+        uniform sampler2D image;
+        uniform bool grayscale;
+        varying vec2 vUv;
+        void main() {
+            vec4 texture = texture2D(image, vUv);
+            
+            float r;
+            float g;
+            float b;
+            b = 1.0-(texture.b * 5.0 ); 
+            if (texture.g <= 0.6) {
+                g = (texture.g -0.2) * 5.0;
+            }
+            else {
+                g = 1.0-((texture.g - 0.6) * 2.5);
+            }
+            r = (texture.r - 0.4) * 5.0;
+            if (grayscale) {
+                gl_FragColor = vec4(texture.r, texture.g, texture.b, 1.0);
+            }
+            else {
+                gl_FragColor = vec4(r, g, b, 1.0);
+            }
+        }
+    </script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
